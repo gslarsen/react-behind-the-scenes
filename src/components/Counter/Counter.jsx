@@ -6,30 +6,30 @@ import PlusIcon from "../UI/Icons/PlusIcon.jsx";
 import CounterOutput from "./CounterOutput.jsx";
 import { log } from "../../log.js";
 
-function isPrime(number) {
-  log(`Calculating if is ${number} prime number`, 2, "other");
-  if (number <= 1) {
+const isPrime = (num) => {
+  log(`Calculating if ${num} is prime number`, 2, "other");
+  if (num <= 1) {
     return false;
   }
 
-  const limit = Math.sqrt(number);
+  const limit = Math.sqrt(num);
 
   for (let i = 2; i <= limit; i++) {
-    if (number % i === 0) {
+    if (num % i === 0) {
       return false;
     }
   }
 
   return true;
-}
+};
 
 export default function Counter({ count }) {
   log("<Counter /> rendered", 1);
-  const countIsPrime = isPrime(count);
-  const [counter, setCounter] = useState(0);
-  // console.log("counter", counter);
+  const [counter, setCounter] = useState(count);
+  console.log("counter:", counter);
 
   const initialCount = useMemo(() => count, [count]);
+  const countIsPrime = useMemo(() => isPrime(count), [count]);
 
   useEffect(() => {
     setCounter(count);

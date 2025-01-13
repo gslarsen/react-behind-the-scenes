@@ -8,6 +8,7 @@ const SetCounter = ({ setCount }) => {
 
   function handleSetClick() {
     setCount(parseInt(countInputRef.current.value || 0));
+    countInputRef.current.value = "";
   }
 
   return (
