@@ -1,9 +1,10 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 
 import IconButton from "../UI/IconButton.jsx";
 import MinusIcon from "../UI/Icons/MinusIcon.jsx";
 import PlusIcon from "../UI/Icons/PlusIcon.jsx";
 import CounterOutput from "./CounterOutput.jsx";
+import CounterHistory from "./CounterHistory.jsx";
 import { log } from "../../log.js";
 
 const isPrime = (num) => {
@@ -25,22 +26,39 @@ const isPrime = (num) => {
 
 export default function Counter({ count }) {
   log("<Counter /> rendered", 1);
-  const [counter, setCounter] = useState(count);
-  console.log("counter:", counter);
+  // const [counter, setCounter] = useState(count);
+  const [counterChanges, setCounterChanges] = useState([
+    { value: count, id: Math.random() },
+  ]);
+
+  const currentCounter = counterChanges.reduce(
+    (prevCounter, counterChange) => prevCounter + counterChange.value,
+    0
+  );
+  // console.log("counter:", counter);
+  console.log("currentCounter:", currentCounter);
 
   const initialCount = useMemo(() => count, [count]);
   const countIsPrime = useMemo(() => isPrime(count), [count]);
 
   useEffect(() => {
-    setCounter(count);
+    setCounterChanges([{ value: count, id: Math.random() }]);
   }, [count]);
 
   const handleChange = useCallback((event) => {
     const change = event.target.textContent;
     if (change === "Decrement") {
-      setCounter((prevCounter) => prevCounter - 1);
+      // setCounter((prevCounter) => prevCounter - 1);
+      setCounterChanges((prevCounterChanges) => [
+        { value: -1, id: Math.random() * 100 },
+        ...prevCounterChanges,
+      ]);
     } else {
-      setCounter((prevCounter) => prevCounter + 1);
+      // setCounter((prevCounter) => prevCounter + 1);
+      setCounterChanges((prevCounterChanges) => [
+        { value: 1, id: Math.random() * 100 },
+        ...prevCounterChanges,
+      ]);
     }
   }, []);
 
@@ -54,11 +72,13 @@ export default function Counter({ count }) {
         <IconButton icon={MinusIcon} onClick={handleChange}>
           Decrement
         </IconButton>
-        <CounterOutput value={counter} />
+        {/* <CounterOutput value={counter} /> */}
+        <CounterOutput value={currentCounter} />
         <IconButton icon={PlusIcon} onClick={handleChange}>
           Increment
         </IconButton>
       </p>
+      <CounterHistory history={counterChanges} />
     </section>
   );
 }
